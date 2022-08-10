@@ -1,8 +1,16 @@
 package main
 
-import "alvintanoto.id/blog/pkg/log"
+import (
+	"flag"
+
+	"alvintanoto.id/blog/internal/route"
+)
 
 func main() {
-	logger := log.Get()
-	logger.InfoLog.Println("App starting...")
+	// Initialize Application Flags
+	port := flag.String("port", ":3000", "Application Port")
+	flag.Parse()
+
+	// Start Server
+	route.Init(*port)
 }
