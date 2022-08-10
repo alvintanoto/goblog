@@ -1,11 +1,13 @@
 package route
 
 import (
+	"html/template"
 	"net/http"
 
 	model "alvintanoto.id/blog/internal/model/response"
 	h "alvintanoto.id/blog/internal/route/handler"
 	m "alvintanoto.id/blog/internal/route/middleware"
+	t "alvintanoto.id/blog/internal/template"
 	"alvintanoto.id/blog/pkg/helper"
 	"alvintanoto.id/blog/pkg/log"
 	"github.com/labstack/echo/v4"
@@ -20,6 +22,10 @@ func Init(port string) {
 
 	handler := &h.Handler{
 		Logger: logger,
+	}
+
+	t := &t.Template{
+		Templates: template.Must(template.ParseGlob("./ui/html/*")),
 	}
 
 	echo.NotFoundHandler = func(c echo.Context) error {
@@ -39,10 +45,12 @@ func Init(port string) {
 	}
 
 	e := echo.New()
+	e.Renderer = t
+
 	e.Use(middleware.LogRequest)
 
+	e.GET("/", handler.Home)
 	e.GET("/healthz", handler.Healthz)
-
 	e.Static("/static", "./ui/static")
 
 	logger.InfoLog.Fatal(e.Start(port))

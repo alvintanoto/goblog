@@ -31,3 +31,7 @@ func (h *Handler) Healthz(c echo.Context) error {
 	h.Logger.InfoLog.Printf("Response JSON: \n%s", string(b))
 	return c.JSON(http.StatusOK, resp)
 }
+
+func (h *Handler) Home(c echo.Context) error {
+	return c.Render(http.StatusOK, "home.html", "")
+}
