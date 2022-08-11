@@ -1,25 +1,24 @@
 {{define "base"}}
 <!doctype html>
 <html lang="en" class="bg-gray-100 font-mono ">
-    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-1"></div>
+    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-2 lg:p-1"></div>
     <head>
         <meta charset='utf-8'>
         <title> Go-Blog - {{template "title" .}}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel='icon' href='/static/img/favicon.ico' type='image/x-icon'>
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">        <link rel='icon' href='/static/img/favicon.ico' type='image/x-icon'>
     </head>
     <body class="flex flex-col min-h-screen">
         <div class="bg-gradient-to-r from-green-400 to-blue-500"></div>
-        <header class="m-8">
-            <div class="text-center text-3xl">
+        <header class="m-16 lg:m-8">
+            <div class="text-center text-7xl lg:text-3xl">
                 <h1><a href="/"> Goblog </a></h1>
             </div>
         </header>
-        <nav class="bg-gray-300 text-green-600">
+        <nav class="bg-gray-300 text-green-600 py-4 text-4xl lg:py-0 lg:text-base">
             <div class="flex container mx-auto items-center">
                 <div css="flex-initial">
                 <a href="/" class="m-2 hover:underline">Home</a>
-                <a href="#" class="m-2 hover:underline">Create</a> 
+                <a href="/create-post" class="m-2 hover:underline">Create</a> 
             </div>
 
             <div class="flex-grow h-16 ...">

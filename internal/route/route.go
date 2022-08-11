@@ -49,6 +49,9 @@ func Init(port string) {
 
 	e.GET("/", handler.Home)
 	e.GET("/healthz", handler.Healthz)
+
+	e.GET("/create-post", handler.CreatePostForm)
+
 	e.Static("/static", "./ui/static")
 
 	logger.InfoLog.Fatal(e.Start(port))
