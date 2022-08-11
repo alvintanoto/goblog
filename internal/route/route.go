@@ -1,7 +1,6 @@
 package route
 
 import (
-	"html/template"
 	"net/http"
 
 	model "alvintanoto.id/blog/internal/model/response"
@@ -25,7 +24,7 @@ func Init(port string) {
 	}
 
 	t := &t.Template{
-		Templates: template.Must(template.ParseGlob("./ui/html/*")),
+		Templates: t.NewTemplateCache("./ui/html/"),
 	}
 
 	echo.NotFoundHandler = func(c echo.Context) error {
@@ -40,8 +39,7 @@ func Init(port string) {
 		}
 
 		logger.InfoLog.Printf("Response JSON: \n%s", string(b))
-
-		return c.JSON(http.StatusNotFound, resp)
+		return c.Render(http.StatusOK, "not_found.page.html", nil)
 	}
 
 	e := echo.New()
