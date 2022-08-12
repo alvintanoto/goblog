@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"alvintanoto.id/blog/internal/database"
+	"alvintanoto.id/blog/internal/database/connection"
 	model "alvintanoto.id/blog/internal/model/response"
 	t "alvintanoto.id/blog/internal/template"
 	"alvintanoto.id/blog/pkg/forms"
@@ -57,12 +59,35 @@ func (h *Handler) Signup(c echo.Context) error {
 		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "error"})
 	}
 
+	username := c.Request().PostForm.Get("username")
+	password := c.Request().PostForm.Get("password")
+
 	form := forms.New(c.Request().PostForm)
 	form.Required("username", "password", "confirm_password")
+	form.MinLength("password", 8)
+	form.MinLength("confirm_password", 8)
+	form.MaxLength("username", 20)
 	form.Match("password", "confirm_password")
 	if !form.Valid() {
 		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
 			Form: form,
+		})
+	}
+
+	_, err = new(database.UserDB).Insert(username, password)
+	if err != nil {
+		flash := "Server Error, Please try again later"
+		if err == connection.ErrConflictData {
+			flash = "User already exist"
+			return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+				Form:       form,
+				FlashError: flash,
+			})
+		}
+
+		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+			Form:       form,
+			FlashError: flash,
 		})
 	}
 
