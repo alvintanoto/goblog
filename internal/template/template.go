@@ -15,8 +15,9 @@ type Template struct {
 }
 
 type TemplateData struct {
-	Form  *forms.Form
-	Flash string
+	Form       *forms.Form
+	Flash      string
+	FlashError string
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
