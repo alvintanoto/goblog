@@ -5,8 +5,11 @@ import (
 	"time"
 
 	model "alvintanoto.id/blog/internal/model/response"
+	t "alvintanoto.id/blog/internal/template"
+	"alvintanoto.id/blog/pkg/forms"
 	"alvintanoto.id/blog/pkg/helper"
 	"alvintanoto.id/blog/pkg/log"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -43,5 +46,27 @@ func (h *Handler) CreatePostForm(c echo.Context) error {
 }
 
 func (h *Handler) SignupForm(c echo.Context) error {
-	return c.Render(http.StatusOK, "signup.page.html", nil)
+	return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+func (h *Handler) Signup(c echo.Context) error {
+	err := c.Request().ParseForm()
+	if err != nil {
+		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "error"})
+	}
+
+	form := forms.New(c.Request().PostForm)
+	form.Required("username", "password", "confirm_password")
+	form.Match("password", "confirm_password")
+	if !form.Valid() {
+		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+			Form: form,
+		})
+	}
+
+	sess, _ := session.Get("session", c)
+	sess.Values["flash"] = "Your signup was successful!"
+	return c.Redirect(http.StatusSeeOther, "/user/login")
 }

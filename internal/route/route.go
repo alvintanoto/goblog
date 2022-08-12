@@ -9,6 +9,8 @@ import (
 	t "alvintanoto.id/blog/internal/template"
 	"alvintanoto.id/blog/pkg/helper"
 	"alvintanoto.id/blog/pkg/log"
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -45,6 +47,16 @@ func Init(port string) {
 	e := echo.New()
 	e.Renderer = t
 
+	store := sessions.NewCookieStore([]byte("xT11TWwO60c*b3&*j42coY9eSPdzJ77W"))
+	store.Options = &sessions.Options{
+		MaxAge:   12 * 3600,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	e.Use(session.MiddlewareWithConfig(session.Config{
+		Store: store,
+	}))
+
 	e.Use(middleware.LogRequest)
 
 	e.GET("/", handler.Home)
@@ -55,6 +67,7 @@ func Init(port string) {
 
 	// user
 	e.GET("/user/signup", handler.SignupForm)
+	e.POST("/user/signup", handler.Signup)
 
 	e.Static("/static", "./ui/static")
 

@@ -6,11 +6,17 @@ import (
 	"io"
 	"path/filepath"
 
+	"alvintanoto.id/blog/pkg/forms"
 	"github.com/labstack/echo/v4"
 )
 
 type Template struct {
 	Templates map[string]*template.Template
+}
+
+type TemplateData struct {
+	Form  *forms.Form
+	Flash string
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
