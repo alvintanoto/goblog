@@ -1,20 +1,21 @@
 {{define "base"}}
 <!doctype html>
 <html lang="en" class="bg-gray-100 font-mono ">
-    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-3 xl:p-1"></div>
+    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-1"></div>
     <head>
         <meta charset='utf-8'>
         <title> Go-Blog - {{template "title" .}}</title>
+        <link href="/static/css/css.css" rel="stylesheet">        <link rel='icon' href='/static/img/favicon.ico' type='image/x-icon'>
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">        <link rel='icon' href='/static/img/favicon.ico' type='image/x-icon'>
     </head>
     <body class="flex flex-col min-h-screen">
         <div class="bg-gradient-to-r from-green-400 to-blue-500"></div>
         <header class="m-14 md:m-12 xl:m-8">
-            <div class="text-center text-6xl xl:text-4xl">
+            <div class="text-center text-4xl">
                 <h1><a href="/"> Goblog </a></h1>
             </div>
         </header>
-        <nav class="bg-gray-300 text-green-600 py-4 text-3xl xl:text-base xl:py-0">
+        <nav class="bg-gray-300 text-green-600 py-0 text-base">
             <div class="flex container mx-auto items-center">
                 <div css="flex-initial">
                 <a href="/" class="m-2 hover:underline">Home</a>
@@ -26,7 +27,7 @@
 
             <div css="flex-initial">
                 <a href="#" class="m-2 hover:underline">Login</a>
-                <a href="#" class="m-2 hover:underline">Signup</a> 
+                <a href="/user/signup" class="m-2 hover:underline">Signup</a> 
             </div>
             </div>
         </nav>

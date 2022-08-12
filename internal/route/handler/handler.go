@@ -41,3 +41,7 @@ func (h *Handler) Home(c echo.Context) error {
 func (h *Handler) CreatePostForm(c echo.Context) error {
 	return c.Render(http.StatusOK, "create.page.html", nil)
 }
+
+func (h *Handler) SignupForm(c echo.Context) error {
+	return c.Render(http.StatusOK, "signup.page.html", nil)
+}

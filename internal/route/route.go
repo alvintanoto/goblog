@@ -50,7 +50,11 @@ func Init(port string) {
 	e.GET("/", handler.Home)
 	e.GET("/healthz", handler.Healthz)
 
+	// posts
 	e.GET("/create-post", handler.CreatePostForm)
+
+	// user
+	e.GET("/user/signup", handler.SignupForm)
 
 	e.Static("/static", "./ui/static")
 
