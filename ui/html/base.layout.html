@@ -1,7 +1,7 @@
 {{define "base"}}
 <!doctype html>
 <html lang="en" class="bg-gray-100 font-mono ">
-    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-2 lg:p-1"></div>
+    <div class="bg-gradient-to-r from-green-400 to-blue-500 p-3 xl:p-1"></div>
     <head>
         <meta charset='utf-8'>
         <title> Go-Blog - {{template "title" .}}</title>
@@ -9,12 +9,12 @@
     </head>
     <body class="flex flex-col min-h-screen">
         <div class="bg-gradient-to-r from-green-400 to-blue-500"></div>
-        <header class="m-12 lg:m-8">
-            <div class="text-center text-7xl md:text-6xl lg:text-5xl xl:text-4xl 2xl:text-3xl">
+        <header class="m-14 md:m-12 xl:m-8">
+            <div class="text-center text-6xl xl:text-4xl">
                 <h1><a href="/"> Goblog </a></h1>
             </div>
         </header>
-        <nav class="bg-gray-300 text-green-600 py-2 text-2xl md:text-2xl lg:text-xl xl:text-lg 2xl:text-base lg:py-0">
+        <nav class="bg-gray-300 text-green-600 py-4 text-3xl xl:text-base xl:py-0">
             <div class="flex container mx-auto items-center">
                 <div css="flex-initial">
                 <a href="/" class="m-2 hover:underline">Home</a>
