@@ -68,6 +68,8 @@ func Init(port string) {
 	// user
 	e.GET("/user/signup", handler.SignupForm)
 	e.POST("/user/signup", handler.Signup)
+	e.GET("/user/login", handler.LoginForm)
+	// e.POST("/user/login", handler.Login)
 
 	e.Static("/static", "./ui/static")
 

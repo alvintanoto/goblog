@@ -68,5 +68,24 @@ func (h *Handler) Signup(c echo.Context) error {
 
 	sess, _ := session.Get("session", c)
 	sess.Values["flash"] = "Your signup was successful!"
+	sess.Save(c.Request(), c.Response().Writer)
+
 	return c.Redirect(http.StatusSeeOther, "/user/login")
+}
+
+func (h *Handler) LoginForm(c echo.Context) error {
+	sess, _ := session.Get("session", c)
+	var flash string
+
+	if sess.Values["flash"] != nil {
+		flash = sess.Values["flash"].(string)
+		delete(sess.Values, "flash")
+	}
+
+	sess.Save(c.Request(), c.Response().Writer)
+
+	return c.Render(http.StatusOK, "login.page.html", &t.TemplateData{
+		Form:  forms.New(nil),
+		Flash: flash,
+	})
 }
