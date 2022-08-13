@@ -26,7 +26,7 @@ func (udb UserDB) Insert(username string, password string) (int, error) {
 		Password: string(hashedPassword),
 	}
 
-	result := db.Table("user").Create(&user)
+	result := db.Table("users").Create(&user)
 
 	if result.Error != nil {
 		log.Get().ErrorLog.Println(result.Error)
@@ -46,7 +46,7 @@ func (udb UserDB) Authenticate(username string, password string) (int, error) {
 
 	user := &model.User{}
 
-	result := db.Table("user").Where("username = ?", username).First(&user)
+	result := db.Table("users").Where("username = ?", username).First(&user)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return 0, connection.ErrInvalidCredential
@@ -68,7 +68,7 @@ func (udb UserDB) Get(userId int) (*model.User, error) {
 
 	user := &model.User{}
 
-	result := db.Table("user").Where("id = ?", userId).First(&user)
+	result := db.Table("users").Where("id = ?", userId).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}

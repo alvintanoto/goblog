@@ -3,5 +3,28 @@
 {{define "title"}} Home {{end}}
 
 {{define "body"}}
-Home
+    <div class="mt-8">
+        {{with .Posts}}
+            <div>
+                {{ range $i, $post := .}}
+                    <a href="#">
+                        <div class="flex flex-row text-green-600 p-4 px-8 hover:underline
+                            {{if isEven $i}} 
+                                bg-gray-200
+                            {{else}}
+                                bg-gray-100
+                            {{end}} ">
+                                <div class="flex-initial">
+                                    #{{ .ID }} {{ .Title}} 
+                                </div>
+                                <div class="flex-grow "></div>
+                                <div class="flex-initial">
+                                    Posted by {{ .Username }} at {{ parseDate .UpdatedAt}} 
+                                </div>
+                        </div>
+                    </a>
+                {{end}}
+            </div>
+        {{end}}
+    </div>
 {{end}}

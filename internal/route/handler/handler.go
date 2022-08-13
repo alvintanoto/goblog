@@ -40,7 +40,23 @@ func (h *Handler) Healthz(c echo.Context) error {
 }
 
 func (h *Handler) Home(c echo.Context) error {
-	return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{})
+	var userID *int = nil
+	sess, _ := session.Get("session", c)
+	if sess.Values["userID"] != nil {
+		id := sess.Values["userID"].(int)
+		userID = &id
+	}
+
+	posts, err := new(database.PostDB).GetHomePosts(userID)
+	if err != nil {
+		return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{
+			FlashError: flash,
+		})
+	}
+
+	return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{
+		Posts: posts,
+	})
 }
 
 func (h *Handler) CreatePostForm(c echo.Context) error {
@@ -68,6 +84,7 @@ func (h *Handler) CreatePost(c echo.Context) error {
 
 	form := forms.New(c.Request().PostForm)
 	form.Required("title", "content")
+	form.MaxLength("title", 30)
 	if !form.Valid() {
 		return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
 			Form: form,

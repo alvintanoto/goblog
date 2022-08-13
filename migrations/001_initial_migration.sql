@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public."user"
+CREATE TABLE IF NOT EXISTS public."users"
 (
     id bigint NOT NULL DEFAULT nextval('user_id_seq'::regclass),
     username text COLLATE pg_catalog."default" NOT NULL,
@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS public.post
     is_deleted boolean NOT NULL DEFAULT false,
     CONSTRAINT post_pkey PRIMARY KEY (id),
     CONSTRAINT post_created_by_fkey FOREIGN KEY (created_by)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES public."users" (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
         NOT VALID,
     CONSTRAINT post_updated_by_fkey FOREIGN KEY (updated_by)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES public."users" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID

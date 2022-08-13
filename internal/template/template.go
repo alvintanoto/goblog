@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"path/filepath"
+	"time"
 
 	model "alvintanoto.id/blog/internal/model/database"
 	"alvintanoto.id/blog/pkg/forms"
@@ -21,6 +22,7 @@ type TemplateData struct {
 	Flash             string
 	FlashError        string
 	AuthenticatedUser *model.User
+	Posts             *[]model.PostUser
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
@@ -47,6 +49,14 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return tmpl.ExecuteTemplate(w, "base", data)
 }
 
+func isEven(i int) bool {
+	return i%2 == 0
+}
+
+func parseDate(date time.Time) string {
+	return date.Format("02 Jan 2006 - 15:04")
+}
+
 func addTemplateData(td *TemplateData, c echo.Context) *TemplateData {
 	user := c.Get("user")
 
@@ -67,10 +77,16 @@ func NewTemplateCache(dir string) map[string]*template.Template {
 		return nil
 	}
 
+	funcMap := template.FuncMap{
+		// The name "inc" is what the function will be called in the template text.
+		"isEven":    isEven,
+		"parseDate": parseDate,
+	}
+
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.New(name).ParseFiles(page)
+		ts, err := template.New(name).Funcs(funcMap).ParseFiles(page)
 		if err != nil {
 			return nil
 		}
