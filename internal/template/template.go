@@ -28,12 +28,14 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 
 	tmpl, ok := t.Templates[name]
 	if !ok {
+		log.Get().ErrorLog.Println("Render error, template not found:", name)
 		return errors.New("template not found")
 	}
 
 	if data != nil {
 		td, ok := data.(*TemplateData)
 		if !ok {
+			log.Get().ErrorLog.Println("Render error, failed to parse data:", name)
 			return errors.New("failed parse data")
 		}
 
@@ -56,6 +58,8 @@ func addTemplateData(td *TemplateData, c echo.Context) *TemplateData {
 }
 
 func NewTemplateCache(dir string) map[string]*template.Template {
+	log.Get().InfoLog.Println("Start caching template...")
+
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.html"))
@@ -84,5 +88,6 @@ func NewTemplateCache(dir string) map[string]*template.Template {
 		cache[name] = ts
 	}
 
+	log.Get().InfoLog.Println("Caching template done...")
 	return cache
 }

@@ -24,5 +24,10 @@ CREATE TABLE IF NOT EXISTS public.post
         REFERENCES public."user" (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
+        NOT VALID,
+    CONSTRAINT post_updated_by_fkey FOREIGN KEY (updated_by)
+        REFERENCES public."user" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
         NOT VALID
 );

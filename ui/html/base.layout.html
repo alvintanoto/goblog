@@ -19,7 +19,9 @@
             <div class="flex container mx-auto items-center">
                 <div css="flex-initial">
                 <a href="/" class="mr-4 hover:underline">Home</a>
-                <a href="/create-post" class="mr-4 hover:underline">Create</a> 
+                {{ if .AuthenticatedUser }}
+                    <a href="/create-post" class="mr-4 hover:underline">Create</a> 
+                {{ end }}
             </div>
 
             <div class="flex-grow h-16 ...">
@@ -32,11 +34,11 @@
                 {{ else }}
                     <a href="/user/login" class="ml-4 hover:underline">Login</a>
                     <a href="/user/signup" class="ml-4 hover:underline">Signup</a> 
-                {{end}}
+                {{ end }}
             </div>
         </nav>
         
-        <section class="container mx-auto">
+        <section class="container mx-auto mb-16">
             {{with .Flash}}
                 <div class='flash m-8 border border-green-600 bg-green-200 p-4'>{{.}}</div>
             {{end}}

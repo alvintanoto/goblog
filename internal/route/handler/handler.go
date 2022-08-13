@@ -19,7 +19,7 @@ type Handler struct {
 	Logger *log.Log
 }
 
-var flash string = "Server error, Please try again later"
+var flash string = "Server error, please try again later"
 
 func (h *Handler) Healthz(c echo.Context) error {
 	resp := &model.HealthzResponse{
@@ -44,7 +44,48 @@ func (h *Handler) Home(c echo.Context) error {
 }
 
 func (h *Handler) CreatePostForm(c echo.Context) error {
-	return c.Render(http.StatusOK, "create.page.html", &t.TemplateData{})
+	return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+func (h *Handler) CreatePost(c echo.Context) error {
+	err := c.Request().ParseForm()
+	if err != nil {
+		return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+			Form:       forms.New(nil),
+			FlashError: flash,
+		})
+	}
+
+	title := c.Request().PostForm.Get("title")
+	content := c.Request().PostForm.Get("content")
+	isPublicValue := c.Request().PostForm.Get("is_public")
+	isPublic := false
+	if len(isPublicValue) > 0 {
+		isPublic = true
+	}
+
+	form := forms.New(c.Request().PostForm)
+	form.Required("title", "content")
+	if !form.Valid() {
+		return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+			Form: form,
+		})
+	}
+
+	sess, _ := session.Get("session", c)
+	userID := sess.Values["userID"].(int)
+
+	_, err = new(database.PostDB).Insert(title, content, isPublic, userID)
+	if err != nil {
+		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+			Form:       form,
+			FlashError: flash,
+		})
+	}
+
+	return c.Redirect(http.StatusSeeOther, "/")
 }
 
 func (h *Handler) SignupForm(c echo.Context) error {
@@ -56,7 +97,10 @@ func (h *Handler) SignupForm(c echo.Context) error {
 func (h *Handler) Signup(c echo.Context) error {
 	err := c.Request().ParseForm()
 	if err != nil {
-		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "bad request"})
+		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+			Form:       forms.New(nil),
+			FlashError: flash,
+		})
 	}
 
 	username := c.Request().PostForm.Get("username")
@@ -76,7 +120,6 @@ func (h *Handler) Signup(c echo.Context) error {
 
 	_, err = new(database.UserDB).Insert(username, password)
 	if err != nil {
-		flash := "Server Error, Please try again later"
 		if err == connection.ErrConflictData {
 			flash = "User already exist"
 			return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
