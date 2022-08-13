@@ -58,6 +58,7 @@ func Init(port string) {
 	}))
 
 	e.Use(middleware.LogRequest)
+	e.Use(middleware.Authenticate)
 
 	e.GET("/", handler.Home)
 	e.GET("/healthz", handler.Healthz)
@@ -69,7 +70,7 @@ func Init(port string) {
 	e.GET("/user/signup", handler.SignupForm)
 	e.POST("/user/signup", handler.Signup)
 	e.GET("/user/login", handler.LoginForm)
-	// e.POST("/user/login", handler.Login)
+	e.POST("/user/login", handler.Login)
 
 	e.Static("/static", "./ui/static")
 

@@ -19,6 +19,8 @@ type Handler struct {
 	Logger *log.Log
 }
 
+var flash string = "Server error, Please try again later"
+
 func (h *Handler) Healthz(c echo.Context) error {
 	resp := &model.HealthzResponse{
 		BaseResponse: model.BaseResponse{
@@ -34,13 +36,11 @@ func (h *Handler) Healthz(c echo.Context) error {
 	}
 
 	h.Logger.InfoLog.Printf("Response JSON: \n%s", string(b))
-
 	return c.JSON(http.StatusOK, resp)
 }
 
 func (h *Handler) Home(c echo.Context) error {
-
-	return c.Render(http.StatusOK, "home.page.html", nil)
+	return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{})
 }
 
 func (h *Handler) CreatePostForm(c echo.Context) error {
@@ -56,7 +56,7 @@ func (h *Handler) SignupForm(c echo.Context) error {
 func (h *Handler) Signup(c echo.Context) error {
 	err := c.Request().ParseForm()
 	if err != nil {
-		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "error"})
+		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "bad request"})
 	}
 
 	username := c.Request().PostForm.Get("username")
@@ -113,4 +113,45 @@ func (h *Handler) LoginForm(c echo.Context) error {
 		Form:  forms.New(nil),
 		Flash: flash,
 	})
+}
+
+func (h *Handler) Login(c echo.Context) error {
+	err := c.Request().ParseForm()
+	if err != nil {
+		c.JSON(echo.ErrBadRequest.Code, map[string]interface{}{"error": "bad request"})
+	}
+
+	form := forms.New(c.Request().PostForm)
+	form.Required("username", "password")
+	if !form.Valid() {
+		if err == connection.ErrConflictData {
+			flash = "User already exist"
+			return c.Render(http.StatusOK, "login.page.html", &t.TemplateData{
+				Form:       form,
+				FlashError: flash,
+			})
+		}
+
+		return c.Render(http.StatusOK, "login.page.html", &t.TemplateData{
+			Form:       form,
+			FlashError: flash,
+		})
+	}
+
+	id, err := new(database.UserDB).Authenticate(form.Get("username"), form.Get("password"))
+	if err != nil {
+		if err == connection.ErrInvalidCredential {
+			flash = "Username or password is incorrect"
+			return c.Render(http.StatusOK, "login.page.html", &t.TemplateData{
+				Form:       form,
+				FlashError: flash,
+			})
+		}
+	}
+
+	sess, _ := session.Get("session", c)
+	sess.Values["userID"] = id
+	sess.Save(c.Request(), c.Response().Writer)
+
+	return c.Redirect(http.StatusSeeOther, "/")
 }

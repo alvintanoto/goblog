@@ -15,7 +15,9 @@ type Postgresql struct{}
 var db *gorm.DB
 
 var (
-	ErrConflictData = errors.New("violates_unique_constraint")
+	ErrConflictData      = errors.New("violates_unique_constraint")
+	ErrRecordNotFound    = errors.New("record_not_found")
+	ErrInvalidCredential = errors.New("invalid_credentials")
 )
 
 func (p Postgresql) Init(dsn string) {
