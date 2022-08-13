@@ -1,7 +1,6 @@
 package route
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -41,9 +40,6 @@ func (h *Handler) Healthz(c echo.Context) error {
 }
 
 func (h *Handler) Home(c echo.Context) error {
-	sess, _ := session.Get("session", c)
-	fmt.Println(sess.Values)
-
 	return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{})
 }
 

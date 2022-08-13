@@ -32,21 +32,27 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	}
 
 	if data != nil {
-		user := c.Get("user")
 		td, ok := data.(*TemplateData)
-
-		if user != nil {
-			td.AuthenticatedUser = user.(*model.User)
-		}
-
 		if !ok {
-			return errors.New("failed to add data")
+			return errors.New("failed parse data")
 		}
+
+		td = addTemplateData(td, c)
 
 		return tmpl.ExecuteTemplate(w, "base", td)
 	}
 
 	return tmpl.ExecuteTemplate(w, "base", data)
+}
+
+func addTemplateData(td *TemplateData, c echo.Context) *TemplateData {
+	user := c.Get("user")
+
+	if user != nil {
+		td.AuthenticatedUser = user.(*model.User)
+	}
+
+	return td
 }
 
 func NewTemplateCache(dir string) map[string]*template.Template {
