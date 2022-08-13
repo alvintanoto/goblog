@@ -57,7 +57,7 @@ func (udb UserDB) Authenticate(username string, password string) (int, error) {
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return 0, err
+		return 0, connection.ErrInvalidCredential
 	}
 
 	return user.ID, nil

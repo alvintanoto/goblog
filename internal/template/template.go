@@ -2,13 +2,13 @@ package template
 
 import (
 	"errors"
-	"fmt"
 	"html/template"
 	"io"
 	"path/filepath"
 
 	model "alvintanoto.id/blog/internal/model/database"
 	"alvintanoto.id/blog/pkg/forms"
+	"alvintanoto.id/blog/pkg/log"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,7 +24,7 @@ type TemplateData struct {
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	fmt.Println("Rendering ", name)
+	log.Get().InfoLog.Println("Rendering ", name)
 
 	tmpl, ok := t.Templates[name]
 	if !ok {
@@ -42,9 +42,6 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 		if !ok {
 			return errors.New("failed to add data")
 		}
-
-		fmt.Println("data", user)
-		fmt.Println("templateData", td)
 
 		return tmpl.ExecuteTemplate(w, "base", td)
 	}

@@ -14,16 +14,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Init(port string) {
+func Init(port string, secret string) {
 	logger := log.Get()
-
-	middleware := &m.Middleware{
-		Logger: logger,
-	}
-
-	handler := &h.Handler{
-		Logger: logger,
-	}
 
 	t := &t.Template{
 		Templates: t.NewTemplateCache("./ui/html/"),
@@ -47,15 +39,16 @@ func Init(port string) {
 	e := echo.New()
 	e.Renderer = t
 
-	store := sessions.NewCookieStore([]byte("xT11TWwO60c*b3&*j42coY9eSPdzJ77W"))
-	store.Options = &sessions.Options{
-		MaxAge:   12 * 3600,
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
+	store := sessions.NewCookieStore([]byte(secret))
+	e.Use(session.Middleware(store))
+
+	middleware := &m.Middleware{
+		Logger: logger,
 	}
-	e.Use(session.MiddlewareWithConfig(session.Config{
-		Store: store,
-	}))
+
+	handler := &h.Handler{
+		Logger: logger,
+	}
 
 	e.Use(middleware.LogRequest)
 	e.Use(middleware.Authenticate)
@@ -71,6 +64,7 @@ func Init(port string) {
 	e.POST("/user/signup", handler.Signup)
 	e.GET("/user/login", handler.LoginForm)
 	e.POST("/user/login", handler.Login)
+	e.GET("/user/logout", handler.Logout)
 
 	e.Static("/static", "./ui/static")
 

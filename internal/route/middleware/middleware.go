@@ -1,7 +1,6 @@
 package route
 
 import (
-	"fmt"
 	"net/http"
 
 	"alvintanoto.id/blog/internal/database"
@@ -24,9 +23,15 @@ func (m *Middleware) LogRequest(next echo.HandlerFunc) echo.HandlerFunc {
 
 func (m *Middleware) Authenticate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		log.Get().InfoLog.Println("Authenticating...")
+
+		log.Get().InfoLog.Println("Getting session...")
 		sess, _ := session.Get("session", c)
-		exist := sess.Values["userID"] != nil
-		fmt.Println("Middleware: start", sess.Values["userID"])
+		log.Get().InfoLog.Println("Getting session done...")
+
+		exist := sess.Values["userID"] != nil && sess.Values["userID"] != 0
+		log.Get().InfoLog.Println("Sesion user id exist:", exist)
+		log.Get().InfoLog.Println("Sesion user id:", sess.Values["userID"])
 
 		if !exist {
 			return next(c)
@@ -45,7 +50,6 @@ func (m *Middleware) Authenticate(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"error": "server error"})
 		}
 
-		fmt.Println("middleware", user)
 		c.Set("user", user)
 		return next(c)
 	}

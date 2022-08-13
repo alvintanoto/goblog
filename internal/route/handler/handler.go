@@ -1,6 +1,7 @@
 package route
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,11 +41,14 @@ func (h *Handler) Healthz(c echo.Context) error {
 }
 
 func (h *Handler) Home(c echo.Context) error {
+	sess, _ := session.Get("session", c)
+	fmt.Println(sess.Values)
+
 	return c.Render(http.StatusOK, "home.page.html", &t.TemplateData{})
 }
 
 func (h *Handler) CreatePostForm(c echo.Context) error {
-	return c.Render(http.StatusOK, "create.page.html", nil)
+	return c.Render(http.StatusOK, "create.page.html", &t.TemplateData{})
 }
 
 func (h *Handler) SignupForm(c echo.Context) error {
@@ -151,6 +155,15 @@ func (h *Handler) Login(c echo.Context) error {
 
 	sess, _ := session.Get("session", c)
 	sess.Values["userID"] = id
+	sess.Save(c.Request(), c.Response().Writer)
+
+	return c.Redirect(http.StatusSeeOther, "/")
+}
+
+func (h *Handler) Logout(c echo.Context) error {
+	sess, _ := session.Get("session", c)
+	delete(sess.Values, "userID")
+
 	sess.Save(c.Request(), c.Response().Writer)
 
 	return c.Redirect(http.StatusSeeOther, "/")

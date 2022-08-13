@@ -26,9 +26,13 @@
             </div>
 
             <div css="flex-initial">
-                <a href="/user/login" class="m-2 hover:underline">Login</a>
-                <a href="/user/signup" class="m-2 hover:underline">Signup</a> 
-            </div>
+                {{ if .AuthenticatedUser }}
+                    <span class="text-black">{{.AuthenticatedUser.Username}}</span>
+                    <a href="/user/logout" class="m-2 hover:underline">Logout</a>
+                {{ else }}
+                    <a href="/user/login" class="m-2 hover:underline">Login</a>
+                    <a href="/user/signup" class="m-2 hover:underline">Signup</a> 
+                {{end}}
             </div>
         </nav>
         
