@@ -1,0 +1,23 @@
+{{template "base" .}}
+
+{{define "title"}} Read {{end}}
+
+{{define "body"}}
+<div class="m-8">
+    <div class="bg-white p-8">
+        <div class="flex flex-row mb-4 align-middle">
+            <div class="font-semibold text-lg "> {{ .Post.Title }}</div>
+
+            {{ if .IsPostOwner}}
+                <div class="flex-grow"></div>
+                <a href="/post/edit/{{.Post.ID}}" class="bg-green-600 align-middle px-2 py-1 text-white">Edit Post</a>
+            {{ end }}
+        </div>
+        <div><pre class="whitespace-pre-wrap"><code>{{ .Post.Content }}</code></pre></div>
+    </div>
+    <div class="mt-4 float-right text-right">
+        <div> Authored by {{.Post.Username}}</div>
+        <div>{{ parseDate .Post.UpdatedAt}} </div>
+    </div>
+</div>
+{{end}}

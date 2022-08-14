@@ -23,6 +23,8 @@ type TemplateData struct {
 	FlashError        string
 	AuthenticatedUser *model.User
 	Posts             *[]model.PostUser
+	Post              *model.PostUser
+	IsPostOwner       bool
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {

@@ -1,7 +1,9 @@
 package route
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"alvintanoto.id/blog/internal/database"
@@ -105,5 +107,38 @@ func (h *Handler) CreatePost(c echo.Context) error {
 }
 
 func (h *Handler) ReadPost(c echo.Context) error {
-	return nil
+	id := c.Param("id")
+
+	if len(id) == 0 {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	post, err := new(database.PostDB).Get(i)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	if post == nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	sess, _ := session.Get("session", c)
+	userID := sess.Values["userID"].(int)
+
+	if !post.IsPublic {
+		if post.CreatedBy != userID {
+			return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+		}
+	}
+
+	fmt.Println(userID == post.CreatedBy)
+	return c.Render(http.StatusOK, "read_post.page.html", &t.TemplateData{
+		Post:        post,
+		IsPostOwner: userID == post.CreatedBy,
+	})
 }

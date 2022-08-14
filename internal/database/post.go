@@ -59,3 +59,20 @@ func (pdb PostDB) GetHomePosts(userID *int) (*[]model.PostUser, error) {
 
 	return postUser, nil
 }
+
+func (pdb PostDB) Get(id int) (*model.PostUser, error) {
+	db := new(connection.Postgresql).Get()
+
+	postUser := &model.PostUser{}
+	s := []string{
+		"post.id", "post.title", "post.content", "post.is_public", "post.created_at", "post.updated_at", "users.username", "post.created_by",
+	}
+
+	db.Table("post").
+		Where("post.id = ?", id).
+		Select(s).
+		Order("post.updated_at desc").
+		Joins("left join users on post.created_by = users.id").Scan(&postUser)
+
+	return postUser, nil
+}
