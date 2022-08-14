@@ -10,7 +10,7 @@
 
             {{ if .IsPostOwner}}
                 <div class="flex-grow"></div>
-                <a href="/post/edit/{{.Post.ID}}" class="bg-green-600 align-middle px-2 py-1 text-white">Edit Post</a>
+                <a href="/edit-post/{{.Post.ID}}" class="bg-green-600 align-middle px-2 py-1 text-white">Edit Post</a>
             {{ end }}
         </div>
         <div><pre class="whitespace-pre-wrap"><code>{{ .Post.Content }}</code></pre></div>

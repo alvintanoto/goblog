@@ -22,15 +22,15 @@ CREATE TABLE IF NOT EXISTS public.post
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_by bigint,
     is_deleted boolean NOT NULL DEFAULT false,
+    is_edited boolean NOT NULL DEFAULT false,
     CONSTRAINT post_pkey PRIMARY KEY (id),
     CONSTRAINT post_created_by_fkey FOREIGN KEY (created_by)
-        REFERENCES public."users" (id) MATCH SIMPLE
+        REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE CASCADE
-        ON DELETE CASCADE
-        NOT VALID,
+        ON DELETE CASCADE,
     CONSTRAINT post_updated_by_fkey FOREIGN KEY (updated_by)
-        REFERENCES public."users" (id) MATCH SIMPLE
+        REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-);
+)

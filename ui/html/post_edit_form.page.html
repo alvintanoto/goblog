@@ -1,0 +1,71 @@
+{{template "base" .}}
+
+{{define "title"}} Create {{end}}
+
+{{define "body"}}
+<div>
+    <form action="/edit-post" method="post">
+        {{ if not .Form}}
+            {{ with .Form }}
+            <div>
+                <div class="flex flex-col mx-8 my-4">
+                    <label class="my-2">Title</label>
+                    {{with .Errors.Get "title"}} 
+                        <label class="bg-opacity:0.5 bg-red-200 p-2 mb-2 text-red-800">{{.}}</label>
+                    {{end}}
+                    <input type="text" placeholder="Title" name="title" class="border p-2 focus:border-green-600" value='{{.Get "title"}}'>
+                </div>
+            
+                <div class="flex flex-col mx-8 my-4">
+                    <label class="my-2">Content</label>
+                    {{with .Errors.Get "content"}} 
+                        <label class="bg-opacity:0.5 bg-red-200 p-2 mb-2 text-red-800">{{.}}</label>
+                    {{end}}
+                    <textarea name="content" rows="10" class="border p-2 focus:border-green-600" placeholder="Content">{{.Get "content"}}</textarea>
+                </div>
+
+                <div class="flex mx-8 my-4 items-center">
+                    <input type="checkbox" name="is_public" value="true" class="transform-gpu scale-150 mr-4" 
+                        {{if .Get  "is_public"}}
+                            checked
+                        {{ end }}
+                    />
+                    <label class="my-2">Public Post</label>
+                </div>
+
+                <div class="m-8">
+                    <input type='submit' value="Edit Post" class="p-2 float-right bg-green-600 text-white">
+                </div>
+            </div>
+            {{ end }}
+        {{ else }}
+            {{ with .Post }}
+            <div>
+                <div class="flex flex-col mx-8 my-4">
+                    <label class="my-2">Title</label>
+                    <input type="text" placeholder="Title" name="title" class="border p-2 focus:border-green-600" value='{{ .Title }}'>
+                </div>
+            
+                <div class="flex flex-col mx-8 my-4">
+                    <label class="my-2">Content</label>
+                    <textarea name="content" rows="10" class="border p-2 focus:border-green-600" placeholder="Content">{{ .Content }}</textarea>
+                </div>
+
+                <div class="flex mx-8 my-4 items-center">
+                    <input type="checkbox" name="is_public" value="true" class="transform-gpu scale-150 mr-4" 
+                        {{ if .IsPublic }}
+                            checked
+                        {{ end }}
+                    />
+                    <label class="my-2">Public Post</label>
+                </div>
+
+                <div class="m-8">
+                    <input type='submit' value="Edit Post" class="p-2 float-right bg-green-600 text-white">
+                </div>
+            </div>
+            {{ end }}
+        {{ end }}
+    </form>
+</div>
+{{end}}

@@ -60,6 +60,8 @@ func Init(port string, secret string) {
 	e.GET("/post/:id", handler.ReadPost)
 	e.GET("/create-post", handler.CreatePostForm)
 	e.POST("/create-post", handler.CreatePost)
+	e.GET("/edit-post/:id", handler.EditPostForm)
+	e.POST("/edit-post", handler.EditPost)
 
 	// user
 	e.GET("/user/signup", handler.SignupForm)

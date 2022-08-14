@@ -61,7 +61,7 @@ func (h *Handler) Home(c echo.Context) error {
 }
 
 func (h *Handler) CreatePostForm(c echo.Context) error {
-	return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+	return c.Render(http.StatusOK, "post_form.page.html", &t.TemplateData{
 		Form: forms.New(nil),
 	})
 }
@@ -69,7 +69,7 @@ func (h *Handler) CreatePostForm(c echo.Context) error {
 func (h *Handler) CreatePost(c echo.Context) error {
 	err := c.Request().ParseForm()
 	if err != nil {
-		return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+		return c.Render(http.StatusOK, "post_form.page.html", &t.TemplateData{
 			Form:       forms.New(nil),
 			FlashError: flash,
 		})
@@ -87,7 +87,7 @@ func (h *Handler) CreatePost(c echo.Context) error {
 	form.Required("title", "content")
 	form.MaxLength("title", 30)
 	if !form.Valid() {
-		return c.Render(http.StatusOK, "create_post.page.html", &t.TemplateData{
+		return c.Render(http.StatusOK, "post_form.page.html", &t.TemplateData{
 			Form: form,
 		})
 	}
@@ -97,7 +97,7 @@ func (h *Handler) CreatePost(c echo.Context) error {
 
 	_, err = new(database.PostDB).Insert(title, content, isPublic, userID)
 	if err != nil {
-		return c.Render(http.StatusOK, "signup.page.html", &t.TemplateData{
+		return c.Render(http.StatusOK, "post_form.page.html", &t.TemplateData{
 			Form:       form,
 			FlashError: flash,
 		})
@@ -128,17 +128,56 @@ func (h *Handler) ReadPost(c echo.Context) error {
 	}
 
 	sess, _ := session.Get("session", c)
-	userID := sess.Values["userID"].(int)
-
-	if !post.IsPublic {
-		if post.CreatedBy != userID {
-			return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	userID := sess.Values["userID"]
+	if userID != nil {
+		if !post.IsPublic {
+			if post.CreatedBy != userID {
+				return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+			}
 		}
 	}
 
-	fmt.Println(userID == post.CreatedBy)
 	return c.Render(http.StatusOK, "read_post.page.html", &t.TemplateData{
 		Post:        post,
 		IsPostOwner: userID == post.CreatedBy,
 	})
+}
+
+func (h *Handler) EditPostForm(c echo.Context) error {
+	id := c.Param("id")
+
+	if len(id) == 0 {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	post, err := new(database.PostDB).Get(i)
+	if err != nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	if post == nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	sess, _ := session.Get("session", c)
+	userID := sess.Values["userID"]
+	if userID == nil {
+		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	}
+
+	fmt.Println(post)
+
+	return c.Render(http.StatusOK, "post_edit_form.page.html", &t.TemplateData{
+		Post: post,
+		Form: forms.New(nil),
+	})
+}
+
+func (h *Handler) EditPost(c echo.Context) error {
+	return nil
 }

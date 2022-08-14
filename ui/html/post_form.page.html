@@ -20,7 +20,7 @@
                 {{with .Errors.Get "content"}} 
                     <label class="bg-opacity:0.5 bg-red-200 p-2 mb-2 text-red-800">{{.}}</label>
                 {{end}}
-                <textarea name="content" rows="10" class="border p-2 focus:border-green-600" placeholder="Content" value='{{.Get "content"}}'></textarea>
+                <textarea name="content" rows="10" class="border p-2 focus:border-green-600" placeholder="Content">{{.Get "content"}}</textarea>
             </div>
 
             <div class="flex mx-8 my-4 items-center">
