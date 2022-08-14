@@ -1,7 +1,6 @@
 package route
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -168,16 +167,52 @@ func (h *Handler) EditPostForm(c echo.Context) error {
 	userID := sess.Values["userID"]
 	if userID == nil {
 		return c.Render(http.StatusNotFound, "not_found.page.html", &t.TemplateData{})
+	} else {
+		if userID.(int) != post.CreatedBy {
+			return c.Render(http.StatusNotFound, "forbidden.page.html", &t.TemplateData{})
+		}
 	}
-
-	fmt.Println(post)
 
 	return c.Render(http.StatusOK, "post_edit_form.page.html", &t.TemplateData{
 		Post: post,
-		Form: forms.New(nil),
+		Form: nil,
 	})
 }
 
 func (h *Handler) EditPost(c echo.Context) error {
-	return nil
+	c.Request().ParseForm()
+
+	postReqID := c.Request().PostForm.Get("id")
+	title := c.Request().PostForm.Get("title")
+	content := c.Request().PostForm.Get("content")
+	isPublicValue := c.Request().PostForm.Get("is_public")
+	isPublic := false
+	if len(isPublicValue) > 0 {
+		isPublic = true
+	}
+
+	form := forms.New(c.Request().PostForm)
+	form.Required("title", "content")
+	form.MaxLength("title", 30)
+
+	postID, err := strconv.Atoi(postReqID)
+
+	if !form.Valid() {
+		return c.Render(http.StatusOK, "post_edit_form.page.html", &t.TemplateData{
+			Form: form,
+		})
+	}
+
+	sess, _ := session.Get("session", c)
+	userID := sess.Values["userID"].(int)
+
+	_, err = new(database.PostDB).Update(title, content, isPublic, postID, userID)
+	if err != nil {
+		return c.Render(http.StatusOK, "post_form.page.html", &t.TemplateData{
+			Form:       form,
+			FlashError: flash,
+		})
+	}
+
+	return c.Redirect(http.StatusSeeOther, "/")
 }

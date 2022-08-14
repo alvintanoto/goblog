@@ -5,6 +5,7 @@ type Post struct {
 	Title    string `gorm:"column:title"`
 	Content  string `gorm:"column:content"`
 	IsPublic bool   `gorm:"column:is_public"`
+	IsEdited bool   `gorm:"column:is_edited"`
 	Base
 }
 
@@ -13,6 +14,7 @@ type PostUser struct {
 	Title    string `gorm:"column:title"`
 	Content  string `gorm:"column:content"`
 	IsPublic bool   `gorm:"column:is_public"`
+	IsEdited bool   `gorm:"column:is_edited"`
 	Username string
 	Base
 }

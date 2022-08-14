@@ -54,3 +54,14 @@ func (m *Middleware) Authenticate(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
+func (m *Middleware) IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		sess, _ := session.Get("session", c)
+		if sess.Values["userID"] == nil {
+			return c.Render(http.StatusForbidden, "forbidden.page.html", nil)
+		}
+
+		return next(c)
+	}
+}

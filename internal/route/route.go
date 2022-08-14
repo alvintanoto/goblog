@@ -58,9 +58,9 @@ func Init(port string, secret string) {
 
 	// posts
 	e.GET("/post/:id", handler.ReadPost)
-	e.GET("/create-post", handler.CreatePostForm)
+	e.GET("/create-post", handler.CreatePostForm, middleware.IsAuthenticated)
 	e.POST("/create-post", handler.CreatePost)
-	e.GET("/edit-post/:id", handler.EditPostForm)
+	e.GET("/edit-post/:id", handler.EditPostForm, middleware.IsAuthenticated)
 	e.POST("/edit-post", handler.EditPost)
 
 	// user
@@ -68,7 +68,7 @@ func Init(port string, secret string) {
 	e.POST("/user/signup", handler.Signup)
 	e.GET("/user/login", handler.LoginForm)
 	e.POST("/user/login", handler.Login)
-	e.GET("/user/logout", handler.Logout)
+	e.GET("/user/logout", handler.Logout, middleware.IsAuthenticated)
 
 	e.Static("/static", "./ui/static")
 

@@ -1,0 +1,10 @@
+{{template "base" .}}
+
+{{define "title"}} Not Found {{end}}
+
+{{define "body"}}
+    <div class="flex flex-col">
+        <img src="/static/img/forbidden.svg" class="bg-center max-w-md m-auto mt-36" >
+        <div class="bg-center max-w-md m-auto mt-12 text-base">You dont have access to this page...</div>
+    </div>
+{{end}}
