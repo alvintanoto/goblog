@@ -57,6 +57,7 @@ func Init(port string, secret string) {
 	e.GET("/healthz", handler.Healthz)
 
 	// posts
+	e.GET("/post/:id", handler.ReadPost)
 	e.GET("/create-post", handler.CreatePostForm)
 	e.POST("/create-post", handler.CreatePost)
 

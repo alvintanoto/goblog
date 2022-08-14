@@ -7,7 +7,7 @@
         {{with .Posts}}
             <div>
                 {{ range $i, $post := .}}
-                    <a href="#">
+                    <a href="/post/{{.ID}}">
                         <div class="flex flex-row text-green-600 p-4 px-8 hover:underline
                             {{if isEven $i}} 
                                 bg-gray-200
