@@ -1,3 +1,6 @@
+CREATE SEQUENCE user_id_seq;
+CREATE SEQUENCE post_id_seq;
+
 CREATE TABLE IF NOT EXISTS public."users"
 (
     id bigint NOT NULL DEFAULT nextval('user_id_seq'::regclass),
